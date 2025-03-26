@@ -1,9 +1,15 @@
 <script setup>
-
-import { Content, Grid, Row, Column, Breadcrumb, Title, Button, Card, Input, Dropdown, Table } from "@ded-wds-vue/ui";
+import { Content, Grid, Row, Column, Breadcrumb, Title, Button, Card, Input, Dropdown, Table, StatusIndicator, Pagination } from
+    "@ded-wds-vue/ui";
+import ComplexButton from "@/components/ComplexButton.vue";
 import { useRouter } from "vue-router"
-
+import { ref } from "vue"
 const router = useRouter()
+
+const projectInput = ref("")
+const companyInput = ref("")
+const statusInput = ref("")
+
 const breadcrumbData = [
   {
     label: "首頁",
@@ -28,7 +34,6 @@ const dropdownData = [
     value: "reviewed",
   },
 ];
-
 const tableData = [
   {
     column1: "CompanyA",
@@ -103,16 +108,30 @@ const tableColumns = [
     width: "180px",
   },
   {
-    align: "center",
     key: "column6",
     title: "廣告播放結果",
+    align: "center",
     width: "142px",
   },
   {
-    align: "center",
     key: "column7",
     title: "",
+    align: "center",
     width: "56px",
+  },
+]
+const ComplexButtons = [
+  {
+    label: "檢查計劃",
+    prefix: "SvgVisibility",
+  },
+  {
+    label: "編輯計劃",
+    prefix: "SvgPlus",
+  },
+  {
+    label: "刪除計劃",
+    prefix: "SvgFan",
   },
 ]
 
@@ -173,7 +192,7 @@ function goToLab2() {
                       placeholder="請輸入投放計劃名稱"
                       size="medium"
                       prefix="SvgSearch"
-                      v-model="modelValue"
+                      v-model="projectInput"
                     />
                   </Column>
                   <Column :xs="6">
@@ -183,7 +202,7 @@ function goToLab2() {
                       placeholder="請輸入公司名稱"
                       size="medium"
                       prefix="SvgSearch"
-                      v-model="modelValue"
+                      v-model="companyInput"
                     />
                   </Column>
                 </Row>
@@ -195,7 +214,7 @@ function goToLab2() {
                       :dataSource="dropdownData"
                       placeholder="狀態"
                       size="medium"
-                      v-model="modelValue"
+                      v-model="statusInput"
                     ></Dropdown>
                   </Column>
                   <Column :xs="6">
@@ -226,14 +245,66 @@ function goToLab2() {
                   :isSprite="false"
                   className="mt-4 mb-6 ad-resource-table"
                 >
+                  <!-- 投放計劃名稱 -->
                   <template #head="{item}">
-
                     <Title themeColor="primary">{{item.head}}</Title>
                   </template>
-                  <template #column5="{item}">
-                    {{item.column5}}
-                    檢視按鈕
+
+                  <!-- 發佈狀態 -->
+                  <template #column4="{item}">
+                    <!-- FIXME: StatusIndicator 的 isShowDot false 時 storybook 不會出現  -->
+                    <StatusIndicator themeColor="info" variant="soft" size="small" :isShowDot="false">
+                      {{item.column4}}
+                    </StatusIndicator>
                   </template>
+
+                  <!-- 審核結果 -->
+                  <template #column5="{item}">
+                    <div class="flex gap-2">
+                      <StatusIndicator
+                        :themeColor="item.column5 === '通過' ? 'success' : 'error'"
+                        variant="soft"
+                        :prefix="item.column5 === '通過' ? 'SvgSuccessCircle' : 'SvgErrorCircle'"
+                        size="small"
+                        :isShowDot="false"
+                        className="w-full"
+                      >
+                        {{item.column5}}
+                      </StatusIndicator>
+                      <Button
+                        themeColor="neutral"
+                        variant="soft"
+                        size="small"
+                        width="fit"
+                      >
+                        檢視
+                      </Button>
+                    </div>
+                  </template>
+
+                  <!-- 廣告播放結果 -->
+                  <template #column6="{item}">
+                    <Button
+                      themeColor="neutral"
+                      variant="soft"
+                      prefix="SvgVisibility"
+                      size="small"
+                      width="fit"
+                    >
+                      查看明細
+                    </Button>
+                  </template>
+
+                  <!-- 按鈕組 -->
+                  <template #column7="{item}">
+                    <ComplexButton
+                      :dataSource="ComplexButtons"
+                      themeColor="neutral"
+                      variant="soft"
+                      prefix="SvgMoreVert"
+                    ></ComplexButton>
+                  </template>
+
                 </Table>
               </Column>
             </Row>
@@ -242,6 +313,18 @@ function goToLab2() {
       </Row>
 
       <!-- [ Footer ] Pagination區塊 -->
+      <Row>
+        <Column :xs="12">
+          <Pagination
+            :totalItems="5"
+            :currentPage="1"
+            :itemsPerPageOptions="[10,20,50]"
+            :defaultItemsPerPage="5"
+            :isShowPageInfo="true"
+            @onPageChange="handlePageChange()"
+          ></Pagination>
+        </Column>
+      </Row>
 
 
     </Grid>
@@ -250,3 +333,16 @@ function goToLab2() {
 
 
 </template>
+
+<style lang="scss">
+@use "../../style/theme/default_variable.scss" as *;
+.ad-resource-table {
+  .ded-table-thead {
+    background: #f0f0f0;
+  }
+
+  .ded-table-thead-tr-th {
+    color: $text-color-secondary;
+  }
+}
+</style>
