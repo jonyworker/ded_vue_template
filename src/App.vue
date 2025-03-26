@@ -1,8 +1,12 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import Lab1View from './views/Lab1/Lab1View.vue'
+import RouterLayout from './components/RouterLayout.vue'
 </script>
 
 <template>
-  <HelloWorld/>
+  <RouterLayout>
+    <router-view />
+  </RouterLayout>
+
 </template>
 
