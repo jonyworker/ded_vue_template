@@ -39,7 +39,7 @@ const sideNavData = [
 ]
 </script>
 <template>
-  <Layout>
+  <Layout className="h-screen">
     <Header>
       <Navbar
         :dataSource="dataSource"
@@ -48,9 +48,10 @@ const sideNavData = [
       ></Navbar>
     </Header>
 
-    <Layout>
+    <Layout className="h-screen">
       <!-- 導覽區塊 -->
       <!-- FIXME: SideNav 的 themeColor 要改成可接收 hexCode -->
+      <!-- FIXME: MenuItem 的改 branch Update_to_Typescript update：Menu(非TS) -->
       <!-- FIXME: MenuItem 的 children 要改成可 disabled -->
       <Side className="xs:w-0 lg:w-[275px]">
         <SideNav
@@ -74,3 +75,11 @@ const sideNavData = [
     </Layout>
   </Layout>
 </template>
+
+<style lang="scss">
+//.ded-avatar-container,
+//.navbar-form-search,
+//.navbar-icons {
+//  display: none !important;
+//}
+</style>
