@@ -1,0 +1,114 @@
+@use 'sass:list';
+@use '../../theme/index' as *;
+
+:root {
+    interpolate-size: allow-keywords;
+}
+
+.ded-accordion {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+
+    &-solid {
+        gap: 8px;
+    }
+
+    &-item {
+        background-color: list.nth($neutral-0, $site);
+
+        &-highlight {
+            border-bottom-width: $border-width;
+            border-bottom-style: solid;
+            border-bottom-color: $auo-form-border;
+
+            &:hover {
+                border-bottom-width: $border-width-2;
+                border-bottom-color: $auo-form-hover;
+            }
+        }
+
+        &-solid {
+            border-width: $border-width-2;
+            border-style: solid;
+            border-color: transparent;
+            box-shadow: $shadow-light-200;
+            border-radius: $radius-8;
+
+            &:hover {
+                border-width: $border-width-2;
+                border-style: solid;
+                border-color: $auo-form-hover;
+            }
+        }
+
+        &-open {
+            transition: transform 0.3s;
+            transform: rotate(180deg);
+        }
+
+        &-close {
+            transition: transform 0.3s;
+            transform: rotate(0deg);
+        }
+    }
+
+    .ded-accordion-detail {
+        .ded-accordion-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 700;
+            padding: 1em;
+
+            &::marker {
+                content: '';
+            }
+
+            &-content {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                &-default {
+                    font-size: $text-size-2xl;
+                }
+
+                &-small {
+                    font-size: $text-size-xl;
+                }
+            }
+
+            &-icon {
+                width: 24px;
+                height: 24px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: 2px solid $auo-icon-default;
+                border-radius: $radius-999;
+            }
+        }
+
+        &-content {
+            padding: 0 52px 16px;
+            overflow: hidden;
+            font-size: 16px;
+            color: list.nth($text-secondary, $site);
+        }
+    }
+}
+
+/* Animation */
+::details-content {
+    transition: height 0.5s ease, content-visibility 0.5s ease allow-discrete;
+    height: 0;
+    overflow: clip;
+    content-visibility: visible !important;
+}
+
+[open]::details-content {
+    height: auto;
+    height: calc-size(auto);
+}

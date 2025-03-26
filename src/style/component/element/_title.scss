@@ -1,0 +1,25 @@
+@use 'sass:list';
+@use '../../theme/index' as *;
+
+.ded-title {
+  display: flex;
+  align-items: center;
+  font-size: inherit;
+  font-weight: $text-regular;
+  color: currentColor;
+  word-break: keep-all;
+  color: list.nth($text-primary, $site);
+
+  @each $level in $levels {
+    &-#{$level} {
+      font-size: getTextLevel('size', $level);
+      font-weight: getTextLevel('weight', $level);
+    }
+  }
+
+  @each $theme in $themes {
+    &-#{$theme} {
+      color: getThemeColor($theme, 'default');
+    }
+  }
+}

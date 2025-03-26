@@ -1,0 +1,38 @@
+@use '../theme/index' as *;
+
+.ded-layout {
+    width: 100%;
+    // min-height: 30vh;
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.ded-header,
+.ded-footer {
+    flex-shrink: 0;
+    width: 100%;
+    max-height: 120px;
+}
+
+.ded-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    height: $header-h;
+}
+
+.ded-footer {
+    height: $header-h;
+}
+
+.ded-side {
+    display: flex;
+}
+
+.ded-content {
+    flex: 1;
+    display: flex;
+    width: 100%;
+}
