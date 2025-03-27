@@ -1,11 +1,15 @@
 <script setup>
-import { Content, Grid, Row, Column, Breadcrumb, Title, Button, Card, Input, Dropdown, Table, StatusIndicator, Pagination, DatePicker } from
+import { Content, Grid, Row, Column, Breadcrumb, Title, Button, Card, Input, Dropdown,Radio, Table, StatusIndicator,
+  Pagination, DatePicker } from
     "@ded-wds-vue/ui";
 import {ref} from "vue";
 import AdResourceCard from "@/components/AdResourceCard.vue";
 
 const projectInput = ref("新增廣告投放計畫")
 const companyInput = ref("company1")
+const isScheduled = ref("");
+const isBreaking = ref("");
+const isBidding = ref("");
 
 const breadcrumbData = [
   {
@@ -29,6 +33,18 @@ const dropdownData = [
   {
     label: "Company2",
     value: "company2",
+  },
+];
+const radioYesNoData = [
+  {
+    label: "是",
+    value: "1",
+    isDisabled: false
+  },
+  {
+    label: "否",
+    value: "0",
+    isDisabled: false
   },
 ];
 </script>
@@ -56,13 +72,13 @@ const dropdownData = [
         <Column :xs="12" align="start">
           <Card className="overflow-auto">
             <Grid :gap="8">
-              <!-- [ Content ] 卡片區塊-計劃訊息(標題) -->
+              <!-- [ Content ] 卡片區塊-計劃訊息(標題) ok -->
               <Row>
                 <Column :xs="12" align="start">
                   <Title :level="4" className="bg-neutral-200 px-2 py-1">計劃訊息</Title>
                 </Column>
               </Row>
-              <!-- [ Content ] 卡片區塊-計劃訊息(投放計劃名稱) -->
+              <!-- [ Content ] 卡片區塊-計劃訊息(投放計劃名稱) ok -->
               <Row>
                 <Column :xs="2" align="start">
                   <div class="flex">
@@ -80,7 +96,7 @@ const dropdownData = [
                 </Column>
                 <Column :xs="6"><div></div></Column>
               </Row>
-              <!-- [ Content ] 卡片區塊-計劃訊息(公司名稱) -->
+              <!-- [ Content ] 卡片區塊-計劃訊息(公司名稱) ok -->
               <Row>
                 <Column :xs="2">
                   <Title>公司名稱</Title>
@@ -94,7 +110,7 @@ const dropdownData = [
                 </Column>
                 <Column :xs="6"><div></div></Column>
               </Row>
-              <!-- [ Content ] 卡片區塊-計劃訊息(廣告素材) -->
+              <!-- [ Content ] 卡片區塊-計劃訊息(廣告素材) ok -->
               <Row>
                 <Column :xs="2">
                   <div class="flex">
@@ -105,11 +121,13 @@ const dropdownData = [
                 <Column :xs="10">
                   <Button themeColor="secondary" variant="filled" prefix="SvgSearch" className="mb-2">選擇廣告素材</Button>
                   <Grid :gap="8">
-                    <Row>
+                    <Row v-for="index in 2" >
                       <Column :xs="12">
                         <AdResourceCard
-                          resourceName="FUCK1"
-                          imgSrc="https://picsum.photos/300/200?random=1"
+                          :resourceName="`素材 ${index}`"
+                          :imgSrc="`https://picsum.photos/800/600?random=${index}`"
+                          :actionMinutes="index"
+                          :actionSeconds="30"
                         ></AdResourceCard>
                       </Column>
                     </Row>
@@ -118,13 +136,13 @@ const dropdownData = [
               </Row>
 
 
-              <!-- [ Content ] 卡片區塊-投放時段(標題) -->
+              <!-- [ Content ] 卡片區塊-投放時段(標題) ok -->
               <Row>
                 <Column :xs="12">
                   <Title :level="4" className="bg-neutral-200 px-2 py-1">投放時段</Title>
                 </Column>
               </Row>
-              <!-- [ Content ] 卡片區塊-投放時段(投放起迄日期) -->
+              <!-- [ Content ] 卡片區塊-投放時段(投放起迄日期) ok -->
               <Row>
                 <Column :xs="2">
                   <div class="flex">
@@ -133,7 +151,7 @@ const dropdownData = [
                   </div>
                 </Column>
                 <Column :xs="8">
-                  <Row>
+                  <Row :hasGap="true">
                     <Column :xs="6">
                       <div class="flex gap-1 items-center">
                         <div class="whitespace-nowrap text-[#004C87]">
@@ -164,7 +182,7 @@ const dropdownData = [
                   <div></div>
                 </Column>
               </Row>
-              <!-- [ Content ] 卡片區塊-投放時段(是否指定時段) -->
+              <!-- [ Content ] 卡片區塊-投放時段(是否指定時段) ok -->
               <Row>
                 <Column :xs="2">
                   <div class="flex">
@@ -173,7 +191,12 @@ const dropdownData = [
                   </div>
                 </Column>
                 <Column :xs="3">
-                  radiobutton
+                  <Radio
+                    :dataSource="radioYesNoData"
+                    direction="row"
+                    size="medium"
+                    v-model="isScheduled"
+                  ></Radio>
                 </Column>
                 <Column :xs="7">
                   <div></div>
@@ -198,8 +221,47 @@ const dropdownData = [
                   </Row>
                 </Column>
               </Row>
-              <!-- [ Content ] 卡片區塊-投放時段(是否插播) -->
+              <!-- [ Content ] 卡片區塊-投放時段(是否插播) ok -->
+              <Row>
+                <Column :xs="2">
+                  <div class="flex">
+                    <Title className="leading-8">是否插播</Title>
+                    <div class="text-red-600">*</div>
+                  </div>
+                </Column>
+                <Column :xs="3">
+                  <Radio
+                    :dataSource="radioYesNoData"
+                    direction="row"
+                    size="medium"
+                    v-model="isBreaking"
+                  ></Radio>
+                </Column>
+                <Column :xs="7">
+                  <div></div>
+                </Column>
+              </Row>
 
+              <!-- [ Content ] 卡片區塊-投放時段(是否出價) ok -->
+              <Row>
+                <Column :xs="2">
+                  <div class="flex">
+                    <Title className="leading-8">是否出價</Title>
+                    <div class="text-red-600">*</div>
+                  </div>
+                </Column>
+                <Column :xs="3">
+                  <Radio
+                    :dataSource="radioYesNoData"
+                    direction="row"
+                    size="medium"
+                    v-model="isBidding"
+                  ></Radio>
+                </Column>
+                <Column :xs="7">
+                  <div></div>
+                </Column>
+              </Row>
 
               <!-- [ Content ] 卡片區塊-投放設備 -->
               <Row>
