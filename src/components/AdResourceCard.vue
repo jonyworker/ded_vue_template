@@ -3,7 +3,7 @@ import { Content, Grid, Row, Column, Breadcrumb, Title, Button, Card, Input, Dro
     "@ded-wds-vue/ui";
 import {ref} from "vue";
 
-//TODO: 時間需改成 define ModelValue
+
 // 定義 Props
 const props = defineProps({
   resourceName: {
@@ -83,7 +83,7 @@ const props = defineProps({
                     size="small"
                     maxLimit="2"
                     placeholder=""
-                    v-model="hoursInput"
+                    v-model="props.actionHours"
                   />
                   <span class="whitespace-nowrap">小時</span>
                   <Input
@@ -92,7 +92,7 @@ const props = defineProps({
                     size="small"
                     maxLimit="2"
                     placeholder=""
-                    v-model="minutesInput"
+                    v-model="props.actionMinutes"
                   />
                   <span class="whitespace-nowrap">分</span>
                   <Input
@@ -101,7 +101,7 @@ const props = defineProps({
                     size="small"
                     maxLimit="2"
                     placeholder=""
-                    v-model="secondsInput"
+                    v-model="props.actionSeconds"
                   />
                   <span class="whitespace-nowrap">秒</span>
                 </div>
