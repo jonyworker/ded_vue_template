@@ -2,6 +2,7 @@
 import { Content, Grid, Row, Column, Breadcrumb, Title, Button, Card, Input, Dropdown, Table, StatusIndicator, Pagination, DatePicker } from
     "@ded-wds-vue/ui";
 import {ref} from "vue";
+import AdResourceCard from "@/components/AdResourceCard.vue";
 
 const projectInput = ref("新增廣告投放計畫")
 const companyInput = ref("company1")
@@ -106,7 +107,10 @@ const dropdownData = [
                   <Grid :gap="8">
                     <Row>
                       <Column :xs="12">
-                        <!-- 自訂元件 AdResourceCard-->
+                        <AdResourceCard
+                          resourceName="FUCK1"
+                          imgSrc="https://picsum.photos/300/200?random=1"
+                        ></AdResourceCard>
                       </Column>
                     </Row>
                   </Grid>
