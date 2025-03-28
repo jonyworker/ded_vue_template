@@ -1,8 +1,5 @@
 <script setup>
-import { Content, Grid, Row, Column, Breadcrumb, Title, Button, Card, Input, Dropdown, Table, StatusIndicator, Pagination, DatePicker, Image } from
-    "@ded-wds-vue/ui";
-import {ref} from "vue";
-
+import { Grid, Row, Column, Title, Card, Input, Image } from "@ded-wds-vue/ui";
 
 // 定義 Props
 const props = defineProps({
