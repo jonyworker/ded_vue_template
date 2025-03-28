@@ -175,7 +175,6 @@ function goToLab2() {
       <!-- [ Content ] 卡片區塊 -->
       <Row>
         <Column :xs="12">
-          <!-- FIXME: Card 的 #header #footer 沒值時不出現 ded-card-header ded-card-footer  -->
           <Card className="overflow-auto">
             <!-- [ Content ] 卡片區塊 filter -->
             <Row :hasGap="true">
@@ -252,7 +251,6 @@ function goToLab2() {
 
                   <!-- 發佈狀態 -->
                   <template #column4="{item}">
-                    <!-- FIXME: StatusIndicator 的 isShowDot false 時 storybook 不會出現  -->
                     <StatusIndicator themeColor="info" variant="soft" size="small" :isShowDot="false">
                       {{item.column4}}
                     </StatusIndicator>
@@ -326,12 +324,8 @@ function goToLab2() {
         </Column>
       </Row>
 
-
     </Grid>
-
   </Content>
-
-
 </template>
 
 <style lang="scss">
