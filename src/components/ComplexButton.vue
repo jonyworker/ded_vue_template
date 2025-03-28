@@ -91,7 +91,6 @@ onUnmounted(() => {
       class="ded-dropdown-menu"
       :style="dropdownPosition"
     >
-      <!-- FIXME: Card 的 #header #footer 沒值時不出現 ded-card-header ded-card-footer  -->
       <Card>
         <div class="flex flex-wrap gap-2">
           <Button
