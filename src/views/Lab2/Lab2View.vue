@@ -1,15 +1,44 @@
 <script setup>
-import { Content, Grid, Row, Column, Breadcrumb, Title, Button, Card, Input, Dropdown,Radio, Table, StatusIndicator,
-  Pagination, DatePicker } from
-    "@ded-wds-vue/ui";
-import {ref} from "vue";
+import { Content, Grid, Row, Column, Breadcrumb, Title, Button, Card, Input, Dropdown,Radio, Checkbox, DatePicker } from "@ded-wds-vue/ui";
+import { ref } from "vue";
 import AdResourceCard from "@/components/AdResourceCard.vue";
+import { formatToThousand } from "@/utils/number.js"
 
 const projectInput = ref("新增廣告投放計畫")
 const companyInput = ref("company1")
-const isScheduled = ref("");
-const isBreaking = ref("");
-const isBidding = ref("");
+const tempAmount = ref(16888000)
+const totalAmount = ref(16666000)
+
+const scheduleTimeModel = ref({
+  scheduleTime: {
+    start:'',
+    end:''
+  },
+  isScheduled: '',
+  isLoopPlay:'',
+  loopStart: {
+    hour: '',
+    minute: '',
+    second: '',
+  },
+  loopEnd: {
+    hour: '',
+    minute: '',
+    second: '',
+  },
+  isloopEveryday:'',
+  isloopEveryWeek:'',
+  isBreaking:'',
+  isBidding:''
+})
+const deviceModel = ref({
+  A1:[],
+  A2:[],
+  A3:[],
+  B1:[],
+  B2:[],
+  B3:[]
+})
 
 const breadcrumbData = [
   {
@@ -51,8 +80,7 @@ const radioYesNoData = [
 
 <template>
   <Content>
-    <Grid :gap="8">
-      <h1>lab2</h1>
+    <Grid :gap="16">
       <!-- [ header ] 麵包屑區塊 -->
       <Row>
         <Column :xs="12">
@@ -69,7 +97,7 @@ const radioYesNoData = [
 
       <!-- [ Content ] 卡片區塊 -->
       <Row>
-        <Column :xs="12" align="start">
+        <Column :xs="12">
           <Card className="overflow-auto">
             <Grid :gap="8">
               <!-- [ Content ] 卡片區塊-計劃訊息(標題) ok -->
@@ -80,13 +108,13 @@ const radioYesNoData = [
               </Row>
               <!-- [ Content ] 卡片區塊-計劃訊息(投放計劃名稱) ok -->
               <Row>
-                <Column :xs="2" align="start">
+                <Column :xs="2">
                   <div class="flex">
                     <Title>投放計劃名稱</Title>
                     <div class="text-red-600">*</div>
                   </div>
                 </Column>
-                <Column :xs="4" align="start">
+                <Column :xs="4">
                   <Input
                     type="text"
                     :hasClear="true"
@@ -160,7 +188,7 @@ const radioYesNoData = [
                         <DatePicker
                           format="yyyy/mm/dd"
                           placeholder="YYYY/MM/DD"
-                          v-model="modelValue"
+                          v-model="scheduleTimeModel.scheduleTime.start"
                         />
                       </div>
                     </Column>
@@ -172,7 +200,7 @@ const radioYesNoData = [
                         <DatePicker
                           format="yyyy/mm/dd"
                           placeholder="YYYY/MM/DD"
-                          v-model="modelValue"
+                          v-model="scheduleTimeModel.scheduleTime.end"
                         />
                       </div>
                     </Column>
@@ -195,14 +223,14 @@ const radioYesNoData = [
                     :dataSource="radioYesNoData"
                     direction="row"
                     size="medium"
-                    v-model="isScheduled"
+                    v-model="scheduleTimeModel.isScheduled"
                   ></Radio>
                 </Column>
                 <Column :xs="7">
                   <div></div>
                 </Column>
               </Row>
-              <!-- [ Content ] 卡片區塊-投放時段(循環模式) -->
+              <!-- [ Content ] 卡片區塊-投放時段(循環模式) ok -->
               <Row>
                 <Column :xs="2">
                   <div></div>
@@ -216,7 +244,102 @@ const radioYesNoData = [
                 <Column :xs="8">
                   <Row>
                     <Column :xs="12">
-                      一堆radio button
+                      <Radio
+                        :dataSource="[{ label: '連續播放', value: '1', isDisabled: false }]"
+                        direction="row"
+                        size="medium"
+                        v-model="scheduleTimeModel.isLoopPlay"
+                      ></Radio>
+                      <Grid :gap="4">
+                        <Row :hasGap="true">
+                          <Column :xs="10">
+                            <div class="flex items-center gap-2">
+                              <Title class="leading-8 ml-3 whitespace-nowrap">開始時間 : </Title>
+                              <div class="flex items-center gap-3">
+                                <Input
+                                  type="number"
+                                  :hasClear="false"
+                                  size="small"
+                                  maxLimit="2"
+                                  placeholder=""
+                                  v-model="scheduleTimeModel.loopStart.hour"
+                                />
+                                <span class="whitespace-nowrap">小時</span>
+                                <Input
+                                  type="number"
+                                  :hasClear="false"
+                                  size="small"
+                                  maxLimit="2"
+                                  placeholder=""
+                                  v-model="scheduleTimeModel.loopStart.minute"
+                                />
+                                <span class="whitespace-nowrap">分</span>
+                                <Input
+                                  type="number"
+                                  :hasClear="false"
+                                  size="small"
+                                  maxLimit="2"
+                                  placeholder=""
+                                  v-model="scheduleTimeModel.loopStart.second"
+                                />
+                                <span class="whitespace-nowrap">秒</span>
+                              </div>
+                            </div>
+                          </Column>
+                        </Row>
+                        <Row :hasGap="true">
+                          <Column :xs="10">
+                            <div class="flex items-center gap-2">
+                              <Title class="leading-8 ml-3 whitespace-nowrap">結束時間 : </Title>
+                              <div class="flex items-center gap-3">
+                                <Input
+                                  type="number"
+                                  :hasClear="false"
+                                  size="small"
+                                  maxLimit="2"
+                                  placeholder=""
+                                  v-model="scheduleTimeModel.loopEnd.hour"
+                                />
+                                <span class="whitespace-nowrap">小時</span>
+                                <Input
+                                  type="number"
+                                  :hasClear="false"
+                                  size="small"
+                                  maxLimit="2"
+                                  placeholder=""
+                                  v-model="scheduleTimeModel.loopEnd.minute"
+                                />
+                                <span class="whitespace-nowrap">分</span>
+                                <Input
+                                  type="number"
+                                  :hasClear="false"
+                                  size="small"
+                                  maxLimit="2"
+                                  placeholder=""
+                                  v-model="scheduleTimeModel.loopEnd.second"
+                                />
+                                <span class="whitespace-nowrap">秒</span>
+                              </div>
+                            </div>
+                          </Column>
+                        </Row>
+                      </Grid>
+                    </Column>
+                    <Column :xs="12">
+                      <Radio
+                        :dataSource="[{ label: '每日', value: '1', isDisabled: false }]"
+                        direction="row"
+                        size="medium"
+                        v-model="scheduleTimeModel.isloopEveryday"
+                      ></Radio>
+                    </Column>
+                    <Column :xs="12">
+                      <Radio
+                        :dataSource="[{ label: '每週', value: '1', isDisabled: false }]"
+                        direction="row"
+                        size="medium"
+                        v-model="scheduleTimeModel.isloopEveryWeek"
+                      ></Radio>
                     </Column>
                   </Row>
                 </Column>
@@ -234,14 +357,13 @@ const radioYesNoData = [
                     :dataSource="radioYesNoData"
                     direction="row"
                     size="medium"
-                    v-model="isBreaking"
+                    v-model="scheduleTimeModel.isBreaking"
                   ></Radio>
                 </Column>
                 <Column :xs="7">
                   <div></div>
                 </Column>
               </Row>
-
               <!-- [ Content ] 卡片區塊-投放時段(是否出價) ok -->
               <Row>
                 <Column :xs="2">
@@ -255,7 +377,7 @@ const radioYesNoData = [
                     :dataSource="radioYesNoData"
                     direction="row"
                     size="medium"
-                    v-model="isBidding"
+                    v-model="scheduleTimeModel.isBidding"
                   ></Radio>
                 </Column>
                 <Column :xs="7">
@@ -263,39 +385,221 @@ const radioYesNoData = [
                 </Column>
               </Row>
 
-              <!-- [ Content ] 卡片區塊-投放設備 -->
+
+              <!-- [ Content ] 卡片區塊-投放設備(標題) ok  -->
               <Row>
-                <Column :xs="12" align="start">
+                <Column :xs="12">
                   <Title :level="4" className="bg-neutral-200 px-2 py-1">投放設備</Title>
                 </Column>
               </Row>
-
-
-              <!-- [ Content ] 卡片區塊-費用試算 -->
+              <!-- [ Content ] 卡片區塊-投放設備(說明) ok  -->
               <Row>
-                <Column :xs="12" align="start">
-                  <Title :level="4" className="bg-neutral-200 px-2 py-1">費用試算</Title>
+                <Column :xs="12">
+                  <Title>請點擊「查看設備」按鈕，確認可以預約的設備。</Title>
+                </Column>
+              </Row>
+              <!-- [ Content ] 卡片區塊-投放設備(按鈕) ok  -->
+              <Row>
+                <Column :xs="2">
+                  <Button
+                    themeColor="primary"
+                    variant="filled"
+                    size="small"
+                    width="fit"
+                    className="w-[96px]"
+                  >
+                    查看設備
+                  </Button>
+                </Column>
+                <Column :xs="10">
+                  <div></div>
+                </Column>
+              </Row>
+              <!-- [ Content ] 卡片區塊-投放設備(投放設備表單) ok -->
+              <Row>
+                <Column :xs="2">
+                  <div class="flex">
+                    <Title>投放設備</Title>
+                    <div class="text-red-600">*</div>
+                  </div>
+                </Column>
+                <Column :xs="10">
+                  <Row>
+                    <Column :xs="4">
+                      <Checkbox
+                        :dataSource="[
+                          { label: 'Device Group A (3)', value: 'A1-all', isDisabled: false },
+                          { label: 'Device A1', value: 'A1-1', isDisabled: false },
+                          { label: 'Device A2', value: 'A1-2', isDisabled: false },
+                          { label: 'Device A3', value: 'A1-3', isDisabled: false }
+                        ]"
+                        direction="column"
+                        size="medium"
+                        v-model="deviceModel.A1"
+                        className="ad-resource-checkbox"
+                      />
+                    </Column>
+
+                    <Column :xs="4">
+                      <Checkbox
+                        :dataSource="[
+                          { label: 'Device Group A (3)', value: 'A2-all', isDisabled: false },
+                          { label: 'Device A1', value: 'A2-1', isDisabled: false },
+                          { label: 'Device A2', value: 'A2-2', isDisabled: false },
+                          { label: 'Device A3', value: 'A2-3', isDisabled: false }
+                        ]"
+                        direction="column"
+                        size="medium"
+                        v-model="deviceModel.A2"
+                        className="ad-resource-checkbox"
+                      />
+                    </Column>
+
+                    <Column :xs="4">
+                      <Checkbox
+                        :dataSource="[
+                          { label: 'Device Group A (3)', value: 'A3-all', isDisabled: false },
+                          { label: 'Device A1', value: 'A3-1', isDisabled: false },
+                          { label: 'Device A2', value: 'A3-2', isDisabled: false },
+                          { label: 'Device A3', value: 'A3-3', isDisabled: false }
+                        ]"
+                        direction="column"
+                        size="medium"
+                        v-model="deviceModel.A3"
+                        className="ad-resource-checkbox"
+                      />
+                    </Column>
+
+                    <Column :xs="4">
+                      <Checkbox
+                        :dataSource="[
+                          { label: 'Device Group B (2)', value: 'B1-all', isDisabled: false },
+                          { label: 'Device A4', value: 'B1-1', isDisabled: false }
+                        ]"
+                        direction="column"
+                        size="medium"
+                        v-model="deviceModel.B1"
+                        className="ad-resource-checkbox"
+                      />
+                    </Column>
+
+                    <Column :xs="4">
+                      <Checkbox
+                        :dataSource="[
+                          { label: 'Device Group B (2)', value: 'B2-all', isDisabled: false },
+                          { label: 'Device A4', value: 'B2-1', isDisabled: false }
+                        ]"
+                        direction="column"
+                        size="medium"
+                        v-model="deviceModel.B2"
+                        className="ad-resource-checkbox"
+                      />
+                    </Column>
+
+                    <Column :xs="4">
+                      <Checkbox
+                        :dataSource="[
+                          { label: 'Device Group B (2)', value: 'B3-all', isDisabled: false },
+                          { label: 'Device A4', value: 'B3-1', isDisabled: false }
+                        ]"
+                        direction="column"
+                        size="medium"
+                        v-model="deviceModel.B3"
+                        className="ad-resource-checkbox"
+                      />
+                    </Column>
+                  </Row>
+
                 </Column>
               </Row>
 
 
+              <!-- [ Content ] 卡片區塊-費用試算(標題) ok -->
+              <Row>
+                <Column :xs="12">
+                  <Title :level="4" className="bg-neutral-200 px-2 py-1">費用試算</Title>
+                </Column>
+              </Row>
+              <!-- [ Content ] 卡片區塊-費用試算(說明) ok  -->
+              <Row>
+                <Column :xs="12">
+                  <Title>請點擊「費用試算」按鈕，試算總金額。</Title>
+                </Column>
+              </Row>
+              <!-- [ Content ] 卡片區塊-費用試算(按鈕) ok  -->
+              <Row>
+                <Column :xs="2">
+                  <Button
+                    themeColor="primary"
+                    variant="filled"
+                    size="small"
+                    width="fit"
+                    className="w-[96px]"
+                  >
+                    費用試算
+                  </Button>
+                </Column>
+                <Column :xs="10">
+                  <div></div>
+                </Column>
+              </Row>
+              <!-- [ Content ] 卡片區塊-費用試算(金額區塊) ok -->
+              <Row>
+                <Column :xs="6">
+                  <Title>試算總金額</Title>
+                  <div class="text-blue-900 text-2xl">$ {{formatToThousand(tempAmount,',')}}</div>
+                </Column>
+                <Column :xs="6">
+                  <Input
+                    label="出價金額"
+                    type="number"
+                    prefix=""
+                    v-model="totalAmount"
+                  ></Input>
+                </Column>
+              </Row>
             </Grid>
           </Card>
         </Column>
       </Row>
 
       <!-- [ Footer ] Button Group 區塊 -->
-      <Row>
-        <Column :xs="12">
-          Button Group 區塊
+      <Row :hasGap="true">
+        <Column :xs="3">
+          <div></div>
+        </Column>
+        <Column :xs="2">
+          <Button
+            themeColor="neutral"
+            variant="filled"
+            width="fluid"
+          >
+            取消
+          </Button>
+        </Column>
+        <Column :xs="2">
+          <Button
+            themeColor="neutral"
+            variant="filled"
+            width="fluid"
+          >
+            暫存
+          </Button>
+        </Column>
+        <Column :xs="2">
+          <Button
+            themeColor="secondary"
+            variant="filled"
+            width="fluid"
+          >
+            重新送審
+          </Button>
+        </Column>
+        <Column :xs="3">
+          <div></div>
         </Column>
       </Row>
 
     </Grid>
   </Content>
-
 </template>
-
-<style scoped>
-
-</style>
